@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sed 1d worldcities.csv | cut -d "," -f4 | sort -u | while read country; do
+	population=$(./analyze average "$country")
+	echo "$country $population"
+done
+

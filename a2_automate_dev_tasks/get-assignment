@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# check # of arguments to make sure only 1 provided 
+if [ $# -eq 0 ] || [ $# -gt 1 ] ; then
+	echo "ERROR: Must only provide one argument, use get-assignment -h for help"
+	exit 0
+fi
+
+# check if user used help condition
+if [ $1 == "-h" ] ; then
+	echo "To use the script, run 'get-assignment hw[NUMBER OF GIT REPOSITORY YOU WANT TO CLONE]'"
+	exit 0
+fi
+
+directory="$HOME/fall2024-comp206/assignments/$1"
+
+# check if directory exists 
+if [ -d "$directory" ] ; then
+	read -p "Directory exists. Delete and replace it with a fresh clone? (yes/no): " continue_script
+	if [ "$continue_script" == "no" ] ; then
+		exit 0
+	fi
+	# delete directory 
+	rm -rf "$directory"
+fi 
+
+clone_output=$(mktemp)
+
+# if clone does not work, output stderr into temp file and display
+if ! git clone https://gitlab.cs.mcgill.ca/jerrin/f24comp206-$1.git $directory >$clone_output 2>&1 ; then
+	cat "$clone_output"
+fi
+
+rm "$clone_output"

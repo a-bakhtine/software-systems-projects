@@ -1,0 +1,8 @@
+1. By what means are the expressions being evaluated by the server? How did you find that out?
+I started with testing different expressions such as 2+2, 5*7, to see how the server interacts with simple cases. With that, I saw the URL updated such that “expr=” appeared. This hinted towards a scripting language being used, so I wanted to see if bash was the one processing these expressions. To test my theory, I inputted $(ls -a), which listed all the contents of the file’s directory, proving the input was being processed with bash. 
+
+2. What is the general shape of a malicious string that executes an arbitrary command of your choosing?
+Since I figured out bash commands work as input, I accessed the home directory with $(ls -a ~), which listed all the files/directories in it. One of the files were named FLAG.txt, so I inputted $(cat ~/FLAG.txt), which gave me the flag.
+
+3. What is the flag?
+The flag is “1FISH2FISH-255,0,0FISH-0,0,255FISH”.

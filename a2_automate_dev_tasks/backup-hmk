@@ -1,0 +1,12 @@
+#!/bin/bash
+
+backup_dir="$HOME/fall2024-comp206/backups"
+if [ ! -d "$backup_dir" ] ; then
+	mkdir "$backup_dir"
+fi
+
+formatted_date=$(date '+%Y-%m-%dT%H:%M:%S')
+
+if tar -czf backups/assignments-$formatted_date.tar.gz $HOME/fall2024-comp206/assignments >/dev/null 2>&1 ; then
+	echo "Created backup: backups/assignments-$formatted_date.tar.gz"
+fi	

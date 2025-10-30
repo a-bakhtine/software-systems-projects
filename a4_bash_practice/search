@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#SHOULDNT CARE WHERE CALLED FROM?
+# should behave like 'find WHERE -name NAME -type f'
+SOURCE_DIR="$1" # should be any source (not necessarily an abs. path)
+FILE="$2"
+
+searchTree () {
+	local DIR="$1"
+	local entry
+
+	# check # of directories	
+	for entry in $DIR/* ; do
+		# if entry is a file and matches file name, print path
+		# echo "DIR: $DIR 	  ENTRY: $entry  	 FILE: $FILE"
+		if [ -f "$entry" ] && [ "$entry" == "$DIR/$FILE" ] ; then
+			echo "$entry"
+
+		# if entry is a directory look through it recursively until not
+		elif [ -d "$entry" ] ; then
+			searchTree "$entry"
+		fi
+	done
+
+}
+
+# start the recursive search from source directory
+searchTree $SOURCE_DIR 

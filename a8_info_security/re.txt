@@ -1,0 +1,46 @@
+1. Read the source code `vulnerable.c`. **Which part of the program is unsafe? Why?**
+Based on the source code of vulnerable.c, the read_stdin_line() function is what allows for a buffer overflow attack. This is because it does not properly check for the length of a user’s input before writing it to the buf array, which is only of size 40 bytes. Hence, if the user inputs more than 40 characters, it will overwrite adjacent memory outside of the buf array, leading to a buffer overflow.
+
+
+2. Compare the assembly code for `main` with the source code:
+a) **Which instructions correspond to initializing the variables `admin` and `login_successful`with zero?**
+Line 1 corresponds to initializing the variable ‘admin’ with 0 and line 2 corresponds to initializing ‘login_sucessful’ with 0.
+LINE 1: 0x0000000000001215 <+12>:    mov    DWORD PTR [rbp-0x4],0x0
+LINE 2: 0x000000000000121c <+19>:    mov    DWORD PTR [rbp-0x8],0x0
+
+b) **Why is there no instruction that initializes `buf`?**
+Since buf is a local uninitialized array, the memory for it is allocated when the stack frame for main is created, but the contents of it are not initialized until data is written to it. Hence, when read_stdin_line(buf) is called, it fills buf with user input, meaning buf gets initialized dynamically instead.
+
+c) **What value is passed as input to the `read_stdin_line` function?** Express your answer as an offset of `rbp`. 
+The value passed as input to the read_stdin_line function is the address of buf, which is rbp-0x30. Specifically, “lea rax,[rbp-0x30]” at <+26> loads the address of buf into rax. Then, “mov rdi,rax” at <+30> moves the address of buf (now in rax) into the first argument register (rdi), which is the argument passed to the read_stdin_line function.
+
+
+3. **Make a small textual diagram of the RAM in this function, indicating which ranges of bytes (as offsets of `rbp`) store the values of the `admin`, `login_successful`, and `buf`.**
+|===================|  <- High memory
+|  login_successful |  rbp-0x8 (4 bytes, int)
+|===================|
+|       admin       |  rbp-0x4 (4 bytes, int)
+|===================|
+|   return address  |  (saved return address)
+|===================|
+|        rbp        |  (base pointer)
+|===================|
+|                   |  
+|       buf         |  rbp-0x30 to rbp-0x1 (40 bytes, char array)
+|                   |
+|===================|  <- Low memory
+
+
+
+4. **Explain why your chosen string prints the flag. Refer to your diagram in your explanation.**
+Chosen string: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (48 A’s)
+Since buf is only 40 bytes we can overflow it if our input string is bigger than that. Both variables, admin and login_sucessful sit right after the base pointer in the stack’s memory when the buffer is about to be filled, which we know from the assembler code (rbp-0x4 and rbp-0x8). We know the base pointer sits right at the end of the buffer which is 40 bytes hence, 48 A’s will overflow into the admin variable and login_sucessful variable. By overflowing it, both variables will be set to 4 ASCII A’s, which is interpreted as true, AKA 1 by the program. Hence, allowing us to meet the print_admin_report conditions to get the flag.
+
+
+5. **What is the flag?**
+The flag is “YOUARE_A_TETRISCHAMPION”
+
+
+6. **Describe a small change one could make to `vulnerable.c`, without addressing the buffer overflow vulnerability, that would defeat the approach you used.**
+Adding a check that ensures the user’s input is less than 40 characters would prevent this specific buffer overflow vulnerability since it would no longer allow for longer inputs to spill over into adjacent memory. For instance, overwriting important values like admin and login_sucessful. 
+

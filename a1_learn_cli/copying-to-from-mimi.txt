@@ -1,0 +1,13 @@
+1) I decided to use Windows Subsystem for Linux (WSL) to copy to/from Mimi.
+2) To install this program I ran Windows Command Prompt in administrator mode,
+	I then ran the command 'wsl --install' and restarted my machine. Next, I
+	reopened Command Prompt and ran 'wsl', which prompted me to create my linux
+	username and password for this distribution, which finished the installation.
+3) To copy a file from my computer to Mimi I would first need to open Command Prompt,
+	run the command 'wsl' to run my installed Linux distribution, and then use rsync.
+	Rsync lets us transfer/sync files between our computer and a server like Mimi and so,
+	you can use 'rsync [option (-a)] [source file/directory(/mnt/c/Users/alice/Pictures/
+	screenshot.png)] [destination (abakht@mimi.cs.mcgill.ca:~/fall2024-comp206/
+	assignments/hw1/)]' to transfer any file over, such as the screenshot as put in the
+	round brackets. After running it, I am prompted	to enter my Mimi password, which 
+	I do, and then the transfer is completed.

@@ -1,0 +1,99 @@
+#!/bin/bash
+# script is a test suite for ./minicalc
+
+# compile minicalc
+gcc -Wall -o minicalc minicalc.c -lm
+
+# args: high-level name, expected exit code, expected stdout, expected stderr, inputs to minicalc
+it () {
+	# value for exitcode, stdin, stdout
+	cmd_output="$(./minicalc ${@:5} 2>&1)"
+	cmd_exitcode="$?"
+	cmd_err="$(./minicalc ${@:5} 2>&1 > /dev/null)"
+
+	# determine if successful cmd
+	cmd_success="FAILED"
+	if [ "$cmd_exitcode" == "$2" ] && [ "$cmd_output" == "$3" ] ; then
+		cmd_success="OK"
+	else 
+		cmd_err="$cmd_output"
+	fi
+
+	echo "$1: $cmd_success"
+
+	# errorneous cmd
+	if [ $cmd_success == "FAILED" ] ; then
+		echo -e "\texpected stdout: \"$3\"\n\tactual stdout: \"$cmd_output\""
+		echo -e "\texpected stderr: \"$4\"\n\tactual stderr: \"$cmd_err\""
+	fi
+}
+
+
+# == GENERAL TEST CASES ==
+it "gives an error message when script receives no inputs" \
+	1 "" "ERROR: No arguments provided! Use command as ./minicalc OPERATION ARGUMENT(S)" \
+	""
+it "gives an error message when unknown operation provided" \
+	1 "" "ERROR: Unknown operation provided! Use 'sqrt', 'gcd', or 'anagram'." \
+	"meow"
+
+# == SQRT TEST CASES ==
+it "gives an error message when sqrt not provided with exactly 1 operand" \
+	2 "" "ERROR: Operation 'sqrt' requires exactly 1 operand!" \
+	"sqrt" "123" "456"
+
+it "gives an error message when sqrt's single input is not a floating point number" \
+	3 "" "ERROR: Operand is not a floating point number!" \
+	"sqrt" "23ab"
+
+it "gives an error message when sqrt's single input is a negative number" \
+	3 "" "ERROR: Operand is a negative value!" \
+	"sqrt" "-26"
+
+it "correctly finds the sqrt of a single number" \
+	0 "4.00" "" \
+	"sqrt" "16"
+
+
+# == GCD TEST CASES ==
+it "gives an error message when gcd receives no inputs" \
+	2 "" "ERROR: Operation 'gcd' requires at least 1 operand!" \
+	"gcd"
+
+it "gives an error message when a gcd input contains a non-numeric value" \
+	3 "" "ERROR: Operand is not an integer!" \
+	"gcd" "ok3"
+
+it "gives an error message when a gcd input is negative" \
+	3 "" "ERROR: One or more operands are negative!" \
+	"gcd" "3" "-5"
+	
+it "correctly finds the gcd of a single number" \
+	0 "42" "" \
+	"gcd" "42"
+
+it "correctly finds the gcd of multiple numbers" \
+	0 "4" "" \
+	"gcd" "8" "20" "12"
+
+
+# == ANAGRAM TEST CASES ==
+it "gives an error message when anagram is given less than 2 args" \
+	2 "" "ERROR: Operation 'anagram' requires exactly 2 operands!" \
+	"anagram" "higrader"
+
+it "gives an error message when anagram is given more than 2 args" \
+	2 "" "ERROR: Operation 'anagram' requires exactly 2 operands!" \
+	"anagram" "arg" "rga" "gar"
+
+it "gives an error message when an input for anagram does not consist of lowercase english letters" \
+	3 "" "ERROR: Operands must only consist of lowercase english letters!" \
+	"anagram" "EVILILLEGALSTRING123" "iamnormalstring"
+
+it "correctly finds an angram for 2 args" \
+	0 "true" "" \
+	"anagram" "vroom" "mrovo"
+
+it "correctly doesn't find an anagram for 2 args" \
+	0 "false" "" \
+	"anagram" "not" "anagram"

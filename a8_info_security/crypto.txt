@@ -1,0 +1,24 @@
+1. What are the three pillars of information security? Describe each in a sentence.
+The three pillars of information security is confidentiality, integrity, and availability. Confidentiality ensures that data is private such that only authorized individuals can access that information. Integrity ensures that the data remains unchanged such that it is preserved (not lost or corrupted). Availability ensures that the information is accessible by those who are authorized.
+
+A) A hacker breaks into a hospital system and encrypts all patient records until receipt of payment. This is known as a _ransomware_ attack. What pillar of information security is undermined by this attack?
+Availability since the authorized users can no longer access patient records.
+
+B) A hacker breaks into a payment processor's database, extracts all its information, and sells it to criminals. What pillar of information security is undermined by this attack?
+Confidentiality since private information was accessed by an unauthorized individual. 
+
+
+2. Explain to what end and under what circumstances two parties would use the Diffie-Hellman key exchange algorithm.
+The Diffie-Hellman key exchange algorithm is used to derive a shared secret over an untrusted communication channel between two parties. For instance, this is used on the internet when two parties need to communicate but want to ensure there is no one eavesdropping. Additionally, TLS may use this encryption tactic, as well as VPNs!
+
+
+3. Explain how the RSA algorithm can be used to prove ownership of a private key.
+RSA can be used to prove ownership of a private key based on its process. First, the message is signed by the owner through the use of the private key. Then, anyone who receives the message can use the sender’s public key to decrypt the signature. Next, when the public key decrypts the signature, it should reveal the original message. If someone tried to fake a signature, the verification would not work since the public key would not produce a valid match in regards to the revealed message.
+
+
+4. Assume that you and I have a preshared key K. Explain how you can use this key to attach an authentication code to a message that certifies to me that you authored the message *without encrypting the message.*
+To prove I authored the message without encrypting it using preshared key K, I would
+1. Append the key to the message and compute a hash of the combined message and key (this is the MAC)
+2. Send the message with the MAC
+3. The receiver (you) would append the key, hash the combined message, and compare it with the MAC. If they match, it proves I authored the message and no alteration has taken place.
+

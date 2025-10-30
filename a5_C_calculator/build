@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# compiles minicalculator.c
+
+# test no argument
+echo "== NO ARGS PROVIDED =="
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc
+
+# test unknown operation
+echo "== UNKNOWN OPERATION PROVIDED =="
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc askdjk
+
+# test sqrt function
+echo "== TEST SQRT FUNCTION =="
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc sqrt 9 && ./minicalc sqrt 42 && ./minicalc sqrt 14 20
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc sqrt lakjsd
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc sqrt -1
+
+# test gcd function
+echo "== TEST GCD FUNCTION =="
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc gcd 21 33 && ./minicalc gcd 8 12 20
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc gcd
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc gcd 1 kaslj 2 
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc gcd -1
+
+# test anagram function
+echo "== TEST ANAGRAM FUNCTION =="
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc anagram valid liavd && ./minicalc anagram dont match
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc anagram
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc anagram ub4me meb4u
+gcc -Wall -o minicalc minicalc.c -lm && ./minicalc anagram CAPITALS arebad

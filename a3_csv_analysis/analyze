@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# == VALIDATE INPUT ==
+# given no arg.
+if [ "$#" -eq 0 ] ; then
+	echo "ERROR: Must provide arguments! Command format: ./analyze [count/total/average] [country]"
+	exit 0
+
+# given an unknown/invalid operation (./analyze foobar Canada)
+elif [ "$1" != "count"  -a  "$1" != "total"  -a  "$1" != "average" ] ; then
+	echo "ERROR: The first argument must be a known operation: Command format: ./analyze [count/total/average] [country]"
+	exit 0
+
+# no country given to a valid operation (./analyze average ;)
+elif [ "$#" -lt 2 ] ; then
+	echo "ERROR: No country provided! Command format: ./analyze [count/total/average] [country]"
+	exit 0
+
+# asked to compute average for country that DNE/has 0 cities/not in CSV
+elif [ "$1" == "average"  -a  "$(cut -d "," -f4 worldcities.csv | grep -x "${*:2}")" == "" ] ; then
+	echo "0"
+	exit 0
+fi
+
+# == HELPER FUCTIONS ==
+# rows for country - gives all rows relating to given country
+rows-for () {
+	grep -w "$*" worldcities.csv
+}
+
+# expects to receive numbers on stdin, one per line, sums them using while loop+bash arithmetic sub. $(())
+sum () {
+	sum=0
+	while read population ; do
+		sum=$(( sum + population ))
+	done 
+	echo "$sum"
+}
+
+# == CMD OPERATIONS ==
+# count the cities in country 
+count () {
+	rows-for "$*" | wc -l
+}
+
+# sum the population counts of each city in country
+total () {
+	rows-for "$*" | cut -d "," -f8 | sum
+}
+
+# compute the average population of the cities in country
+average () {
+	total_population=$(total "$*")
+	city_count=$(count "$*")
+	echo $(( total_population / city_count ))
+}
+
+# run user command with their inputted country as arg
+$1 $2
+

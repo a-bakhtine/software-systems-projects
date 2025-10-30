@@ -1,0 +1,29 @@
+#!/bin/bash
+
+file="jerrington.me.log"
+
+# prints # of unique IP addresses accessed on site
+unique-ips () {
+	cut -d " " -f1 "$file" | sort -u | wc -l	
+}
+
+reqs-per-day () {
+	reqs="$(wc -l "$file" | cut -d " " -f1)"
+	days="$(grep -wE "(OPTIONS|GET|HEAD|POST|PUT|DELETE|TRACE|CONNECT|PATCH)" "$file" | cut -d " " -f4 | cut -c2-3 | sort -u | wc -l)"
+	echo $(( reqs / days ))
+}
+
+most-popular-post () {
+	cut -d " " -f6-9 "$file" | sed -E 's/HTTP\/1\.[01]/HTTP\/1.X/' | grep -E '^"GET /posts.+HTTP/1.X" 200$' | sort | uniq -c | sort -nr | head -n 1 | grep -o '/posts/[^ ]*' | cut -d "/" -f3	
+
+}
+
+total-transferred () {
+	count="0"
+	while read -r line; do
+		count=$(( count+line ))
+	done< <(grep -oE '[1-5][0-9][0-9] [0-9]+' "$file" | cut -d ' ' -f2)	
+	echo $count 
+}
+
+$1
